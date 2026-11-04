@@ -1,0 +1,29 @@
+Experiment 1 – Cloud Storage
+Aim: Create a cloud storage bucket and upload a dataset (CSV/JSON). Demonstrate basic operations such as upload, download, and file organization using Amazon S3/Azure Blob Storage.
+
+Experiment 2 – Databricks Workspace and Cluster
+Aim: Set up a workspace and create a cluster in Databricks. Verify cluster configuration and execute a simple notebook command.
+
+Experiment 3 – Databricks and Cloud Storage Integration
+Aim: Establish a connection between Databricks and Amazon S3/Azure Blob Storage, access files stored in cloud storage, and display the stored data in Databricks.
+
+Experiment 4 – DataFrames
+Aim: Load structured and semi-structured data (CSV/JSON) into DataFrames using Databricks and display schema and sample records.
+
+Experiment 5 – Data Preprocessing using PySpark
+Aim: To perform data preprocessing on a student dataset using PySpark in Databricks by identifying missing values, handling them appropriately, removing duplicate records, and filtering records according to a specified condition.
+
+Experiment 6 – SQL Operations in Databricks
+Aim: Use SQL queries in Databricks to perform operations like SELECT, JOIN, GROUP BY, and aggregation on a dataset.
+
+Experiment 7 – Data Partitioning
+Aim: To store processed student data in a partitioned table using Databricks and compare query execution behavior with a non-partitioned table to understand the performance benefits of partition pruning.
+
+Experiment 8 – ETL Pipeline
+Aim: To design and implement an ETL pipeline to extract data from cloud storage, transform it, and load it back into storage using Databricks or Airflow or Azure Data Factory.
+
+Experiment 9 – Real-Time Data Streaming
+Aim: To simulate real-time data streaming and process incoming data using Apache Spark Structured Streaming in Databricks/cloud.
+
+Experiment 10 – Data Visualization and Dashboard
+Aim: To create meaningful visualizations such as bar charts and line charts and combine them into an interactive sales analytics dashboard using the processed data stored in the practical9_streaming_sales Delta table in Databricks.

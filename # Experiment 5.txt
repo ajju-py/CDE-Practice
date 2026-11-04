@@ -1,0 +1,165 @@
+# Experiment 5 – Data Preprocessing Using PySpark in Databricks
+
+**Aim:** To perform data preprocessing on a student dataset using PySpark in Databricks by identifying missing values, handling them appropriately, removing duplicate records, and filtering records according to a specified condition.
+
+## Solution
+
+**Platform Used:** Databricks, Python, and Apache Spark (PySpark).
+
+### 1. Introduction
+
+Data preprocessing is the process of cleaning and transforming raw data before analysis. It improves data quality and accuracy.
+
+PySpark provides DataFrame operations to identify missing values, handle null values, remove duplicate records, and filter data based on specific conditions.
+
+### 2. Procedure
+
+**Step 1: Open Databricks Workspace**
+
+1. Log in to your Databricks account.
+2. Open the workspace.
+3. Create a new notebook.
+4. Enter the notebook name `Data_Preprocessing`.
+5. Select Python as the programming language.
+
+**Step 2: Create a Student Dataset**
+
+Execute the following code to create a student dataset:
+
+```python
+data = [
+    (101, "Ajay", "CSE", 85),
+    (102, "Rahul", "IT", 90),
+    (103, "Priya", "CSE", None),
+    (104, "Amit", "ENTC", 78),
+    (105, "Neha", "CSE", 92),
+    (106, "Rohan", "IT", None),
+    (101, "Ajay", "CSE", 85)
+]
+
+columns = ["Student_ID", "Name", "Department", "Marks"]
+
+df = spark.createDataFrame(data, columns)
+
+display(df)
+```
+
+**Step 3: Identify Missing Values**
+
+Use the following code to count missing values in each column:
+
+```python
+from pyspark.sql.functions import col, sum
+
+df.select([
+    sum(col(c).isNull().cast("int")).alias(c)
+    for c in df.columns
+]).show()
+```
+
+**Step 4: Handle Missing Values**
+
+Replace missing values in the Marks column with the average marks:
+
+```python
+from pyspark.sql.functions import avg
+
+average_marks = df.select(avg("Marks")).first()[0]
+
+df = df.fillna({"Marks": int(average_marks)})
+
+display(df)
+```
+
+**Step 5: Remove Duplicate Records**
+
+Use the `dropDuplicates()` function to remove duplicate student records:
+
+```python
+df = df.dropDuplicates()
+
+display(df)
+```
+
+**Step 6: Filter Records According to a Condition**
+
+Filter students who scored more than 80 marks:
+
+```python
+filtered_df = df.filter(col("Marks") > 80)
+
+display(filtered_df)
+```
+
+**Step 7: Display the Final Cleaned Dataset**
+
+Execute the following command:
+
+```python
+print("Final Cleaned Dataset:")
+
+filtered_df.show()
+
+print("Total Records:", filtered_df.count())
+```
+
+### 3. Expected Output
+
+**Missing Values Before Cleaning:**
+
+```text
++----------+----+----------+-----+
+|Student_ID|Name|Department|Marks|
++----------+----+----------+-----+
+|         0|   0|         0|    2|
++----------+----+----------+-----+
+```
+
+**After Handling Missing Values and Removing Duplicates:**
+
+```text
++----------+-----+----------+-----+
+|Student_ID| Name|Department|Marks|
++----------+-----+----------+-----+
+|       101| Ajay|       CSE|   85|
+|       102|Rahul|        IT|   90|
+|       103|Priya|       CSE|   86|
+|       104| Amit|      ENTC|   78|
+|       105| Neha|       CSE|   92|
+|       106|Rohan|        IT|   86|
++----------+-----+----------+-----+
+```
+
+**After Filtering Students With Marks Greater Than 80:**
+
+```text
++----------+-----+----------+-----+
+|Student_ID| Name|Department|Marks|
++----------+-----+----------+-----+
+|       101| Ajay|       CSE|   85|
+|       102|Rahul|        IT|   90|
+|       103|Priya|       CSE|   86|
+|       105| Neha|       CSE|   92|
+|       106|Rohan|        IT|   86|
++----------+-----+----------+-----+
+```
+
+### 4. Functions Used
+
+| Function | Purpose |
+|---|---|
+| `isNull()` | Identifies missing values |
+| `fillna()` | Replaces missing values |
+| `avg()` | Calculates average |
+| `dropDuplicates()` | Removes duplicate records |
+| `filter()` | Filters records based on conditions |
+| `show()` | Displays records |
+| `count()` | Counts total records |
+
+### 5. Result
+
+Successfully performed data preprocessing on a student dataset using PySpark in Databricks by identifying and handling missing values, removing duplicate records, and filtering students based on their marks.
+
+### 6. Conclusion
+
+Data preprocessing improves data quality by removing inconsistencies and handling missing values. PySpark provides efficient DataFrame functions to clean and prepare datasets for further analysis.

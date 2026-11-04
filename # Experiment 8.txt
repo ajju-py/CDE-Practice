@@ -1,0 +1,185 @@
+# Experiment 8 – Design and Implementation of ETL Pipeline
+
+**Aim:** To design and implement an ETL pipeline to extract data from cloud storage, transform it, and load it back into storage using Databricks or Airflow or Azure Data Factory.
+
+## Solution
+
+**Platform Used:** Databricks, Python, PySpark, and Amazon S3.
+
+### 1. Introduction
+
+ETL stands for Extract, Transform, and Load. It is a data processing technique used to collect data from different sources, clean and transform it, and store the processed data in a destination.
+
+The three stages of ETL are:
+
+1. **Extract:** Retrieve raw data from cloud storage.
+2. **Transform:** Clean and process the data.
+3. **Load:** Store the transformed data back into cloud storage.
+
+### 2. Procedure
+
+**Step 1: Create a Dataset**
+
+Create a CSV file named `students.csv` containing the following data:
+
+```csv
+Student_ID,Name,Department,Marks
+101,Ajay,CSE,85
+102,Rahul,IT,90
+103,Priya,CSE,88
+104,Amit,ENTC,78
+105,Neha,CSE,92
+106,Rohan,IT,
+107,Sneha,ENTC,89
+```
+
+Upload this file to an Amazon S3 bucket inside a folder named `raw`.
+
+**Step 2: Open Databricks Workspace**
+
+1. Log in to your Databricks account.
+2. Open the workspace.
+3. Create a new notebook.
+4. Name it `ETL_Pipeline_Practical`.
+5. Select Python as the programming language.
+
+**Step 3: Extract Data**
+
+Read the CSV file from cloud storage using PySpark:
+
+```python
+input_path = "s3a://my-cloud-practical-2026/raw/students.csv"
+
+df = spark.read.option("header", "true") \
+    .option("inferSchema", "true") \
+    .csv(input_path)
+
+display(df)
+```
+
+**Step 4: Transform Data**
+
+Perform data cleaning by handling missing values and removing duplicate records.
+
+```python
+from pyspark.sql.functions import col, avg
+
+# Calculate average marks
+average_marks = df.select(avg("Marks")).first()[0]
+
+# Replace missing marks
+df = df.fillna({"Marks": int(average_marks)})
+
+# Remove duplicate records
+df = df.dropDuplicates(["Student_ID"])
+
+# Filter students with marks greater than 80
+df = df.filter(col("Marks") > 80)
+
+display(df)
+```
+
+**Step 5: Load Processed Data**
+
+Save the transformed dataset back to Amazon S3 in Parquet format:
+
+```python
+output_path = "s3a://my-cloud-practical-2026/processed/"
+
+df.write.mode("overwrite").parquet(output_path)
+
+print("ETL Pipeline Completed Successfully")
+```
+
+**Step 6: Verify the Processed Data**
+
+Read the processed dataset from cloud storage:
+
+```python
+final_df = spark.read.parquet(output_path)
+
+display(final_df)
+
+final_df.show()
+```
+
+Verify that:
+1. Missing values are handled.
+2. Duplicate student records are removed.
+3. Only students scoring more than 80 marks are present.
+4. Processed data is stored in cloud storage.
+
+### 3. Expected Output
+
+**Extracted Raw Dataset:**
+
+```text
++----------+-----+----------+-----+
+|Student_ID|Name |Department|Marks|
++----------+-----+----------+-----+
+|101       |Ajay |CSE       |85   |
+|102       |Rahul|IT        |90   |
+|103       |Priya|CSE       |88   |
+|104       |Amit |ENTC      |78   |
+|105       |Neha |CSE       |92   |
+|106       |Rohan|IT        |NULL |
+|107       |Sneha|ENTC      |89   |
++----------+-----+----------+-----+
+```
+
+**Transformed Dataset:**
+
+```text
++----------+-----+----------+-----+
+|Student_ID|Name |Department|Marks|
++----------+-----+----------+-----+
+|101       |Ajay |CSE       |85   |
+|102       |Rahul|IT        |90   |
+|103       |Priya|CSE       |88   |
+|105       |Neha |CSE       |92   |
+|107       |Sneha|ENTC      |89   |
++----------+-----+----------+-----+
+```
+
+**ETL Pipeline Flow:**
+
+```text
+Raw CSV Dataset
+       |
+       v
+Cloud Storage (Amazon S3)
+       |
+       v
+Extract Data
+       |
+       v
+Transform Data
+(Cleaning, Removing Duplicates,
+Handling Missing Values, Filtering)
+       |
+       v
+Load Processed Data
+       |
+       v
+Cloud Storage (Parquet Format)
+```
+
+### 4. Functions Used
+
+| Function | Purpose |
+|---|---|
+| `spark.read.csv()` | Reads CSV data |
+| `fillna()` | Handles missing values |
+| `avg()` | Calculates average |
+| `dropDuplicates()` | Removes duplicate records |
+| `filter()` | Filters records |
+| `write.parquet()` | Saves processed data |
+| `spark.read.parquet()` | Reads processed data |
+
+### 5. Result
+
+Successfully designed and implemented an ETL pipeline using Databricks and PySpark to extract student data from Amazon S3, transform it by handling missing values, removing duplicates and filtering records, and load the processed data back into cloud storage in Parquet format.
+
+### 6. Conclusion
+
+ETL pipelines automate the process of extracting, transforming, and loading data. Databricks and PySpark provide efficient tools for building data processing pipelines and managing large datasets.

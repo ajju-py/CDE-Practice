@@ -1,0 +1,182 @@
+# Experiment 7 – Data Partitioning and Performance Optimization in Databricks
+
+**Aim:** To store processed student data in a partitioned table using Databricks and compare query execution behavior with a non-partitioned table to understand the performance benefits of partition pruning.
+
+## Solution
+
+**Platform Used:** Databricks, Python, PySpark, and Spark SQL.
+
+### 1. Introduction
+
+Data partitioning is a technique used to divide a large dataset into smaller parts based on a specific column.
+
+In Databricks, partitioning improves query performance by allowing Spark to read only the required partitions instead of scanning the entire dataset.
+
+**Partition Pruning:** It is an optimization technique in which Spark skips unnecessary partitions while executing a query.
+
+### 2. Procedure
+
+**Step 1: Open Databricks Workspace**
+
+1. Log in to your Databricks account.
+2. Open the workspace.
+3. Create a new notebook.
+4. Name the notebook `Data_Partitioning_Practical`.
+5. Select Python as the programming language.
+
+**Step 2: Create a Student Dataset**
+
+Execute the following PySpark code:
+
+```python
+data = [
+    (101, "Ajay", "CSE", 85),
+    (102, "Rahul", "IT", 90),
+    (103, "Priya", "CSE", 88),
+    (104, "Amit", "ENTC", 78),
+    (105, "Neha", "CSE", 92),
+    (106, "Rohan", "IT", 86),
+    (107, "Sneha", "ENTC", 89),
+    (108, "Karan", "CSE", 95)
+]
+
+columns = ["Student_ID", "Name", "Department", "Marks"]
+
+df = spark.createDataFrame(data, columns)
+
+display(df)
+```
+
+**Step 3: Create a Non-Partitioned Table**
+
+Store the student dataset without partitioning:
+
+```python
+df.write.mode("overwrite").format("delta").saveAsTable("students_non_partitioned")
+```
+
+**Step 4: Create a Partitioned Table**
+
+Store the dataset using the Department column for partitioning:
+
+```python
+df.write.mode("overwrite").format("delta").partitionBy("Department").saveAsTable("students_partitioned")
+```
+
+**Step 5: Verify Table Creation**
+
+Execute the following SQL commands:
+
+```sql
+%sql
+SHOW TABLES;
+```
+
+Display the non-partitioned table:
+
+```sql
+%sql
+SELECT * FROM students_non_partitioned;
+```
+
+Display the partitioned table:
+
+```sql
+%sql
+SELECT * FROM students_partitioned;
+```
+
+**Step 6: Execute Query on Non-Partitioned Table**
+
+Retrieve students belonging to the CSE department:
+
+```sql
+%sql
+SELECT * FROM students_non_partitioned
+WHERE Department = 'CSE';
+```
+
+**Step 7: Execute Query on Partitioned Table**
+
+Execute the same query on the partitioned table:
+
+```sql
+%sql
+SELECT * FROM students_partitioned
+WHERE Department = 'CSE';
+```
+
+**Step 8: Compare Query Execution Plans**
+
+Check the execution plan of the non-partitioned table:
+
+```sql
+%sql
+EXPLAIN FORMATTED
+SELECT * FROM students_non_partitioned
+WHERE Department = 'CSE';
+```
+
+Check the execution plan of the partitioned table:
+
+```sql
+%sql
+EXPLAIN FORMATTED
+SELECT * FROM students_partitioned
+WHERE Department = 'CSE';
+```
+
+Observe the partition filters and scan details in both execution plans.
+
+### 3. Expected Output
+
+**Partitioned Table Structure:**
+
+```text
+students_partitioned/
+    Department=CSE/
+    Department=IT/
+    Department=ENTC/
+```
+
+**Query Output:**
+
+```text
++----------+-----+----------+-----+
+|Student_ID|Name |Department|Marks|
++----------+-----+----------+-----+
+|101       |Ajay |CSE       |85   |
+|103       |Priya|CSE       |88   |
+|105       |Neha |CSE       |92   |
+|108       |Karan|CSE       |95   |
++----------+-----+----------+-----+
+```
+
+**Performance Comparison:**
+
+| Non-Partitioned Table | Partitioned Table |
+|---|---|
+| Stores data without directory partitions | Stores data in department-based partitions |
+| May scan more data | Can skip irrelevant partitions |
+| No partition pruning on Department | Supports partition pruning on Department |
+| Less efficient for suitable selective queries on large datasets | Can improve query performance for suitable selective queries |
+
+### 4. Functions and Concepts Used
+
+| Function / Concept | Purpose |
+|---|---|
+| `saveAsTable()` | Creates and saves a table |
+| `partitionBy()` | Divides data into partitions |
+| `overwrite` | Replaces existing table data |
+| `SELECT` | Retrieves records |
+| `WHERE` | Filters records |
+| `EXPLAIN FORMATTED` | Displays the query execution plan |
+| Partition Pruning | Skips unnecessary partitions |
+
+### 5. Result
+
+Successfully created partitioned and non-partitioned student tables in Databricks, executed filtering queries, examined query execution plans, and studied the performance benefits of partition pruning.
+
+### 6. Conclusion
+
+Data partitioning improves query performance when queries filter data using partition columns. Partition pruning reduces unnecessary data scanning and can improve query execution efficiency, especially for large datasets.

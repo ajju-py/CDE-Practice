@@ -1,0 +1,169 @@
+# Experiment 9 – Real-Time Data Streaming Using Apache Spark Structured Streaming
+
+**Aim:** To simulate real-time data streaming and process incoming data using Apache Spark Structured Streaming in Databricks/cloud.
+
+## Solution
+
+**Platform Used:** Databricks, Python, and Apache Spark Structured Streaming.
+
+### 1. Introduction
+
+Real-time data streaming is the process of continuously receiving and processing data as it is generated.
+
+Apache Spark Structured Streaming is a scalable data processing engine used to process real-time data streams.
+
+It allows users to read incoming data, process it, and display the results continuously.
+
+### 2. Procedure
+
+**Step 1: Open Databricks Workspace**
+
+1. Log in to your Databricks account.
+2. Open the workspace.
+3. Create a new notebook.
+4. Name the notebook `Real_Time_Streaming`.
+5. Select Python as the programming language.
+
+**Step 2: Import Required Libraries**
+
+Execute the following code:
+
+```python
+from pyspark.sql.functions import *
+from pyspark.sql.types import *
+```
+
+**Step 3: Create a Streaming Data Schema**
+
+Define the structure of incoming student data:
+
+```python
+schema = StructType([
+    StructField("Student_ID", IntegerType(), True),
+    StructField("Name", StringType(), True),
+    StructField("Department", StringType(), True),
+    StructField("Marks", IntegerType(), True)
+])
+```
+
+**Step 4: Create a Streaming Data Source**
+
+Use the file stream source to read incoming CSV files from a directory.
+
+```python
+input_path = "/tmp/student_stream"
+
+import os
+os.makedirs(input_path, exist_ok=True)
+
+stream_df = (
+    spark.readStream
+    .schema(schema)
+    .option("header", "true")
+    .csv(input_path)
+)
+```
+
+**Step 5: Process Incoming Streaming Data**
+
+Filter students who scored more than 80 marks:
+
+```python
+processed_stream = stream_df.filter(col("Marks") > 80)
+```
+
+**Step 6: Display Streaming Data**
+
+Start the streaming query:
+
+```python
+query = (
+    processed_stream.writeStream
+    .format("memory")
+    .queryName("student_results")
+    .outputMode("append")
+    .start()
+)
+```
+
+**Step 7: Simulate Real-Time Data**
+
+Create a CSV file containing incoming student records:
+
+```python
+sample_data = """Student_ID,Name,Department,Marks
+101,Ajay,CSE,85
+102,Rahul,IT,90
+103,Priya,CSE,88
+104,Amit,ENTC,78
+105,Neha,CSE,92
+"""
+
+with open(input_path + "/students1.csv", "w") as f:
+    f.write(sample_data)
+```
+
+The streaming application automatically detects the new CSV file and processes its records.
+
+**Step 8: Display Processed Streaming Records**
+
+Execute:
+
+```python
+query.processAllAvailable()
+
+spark.sql("SELECT * FROM student_results").show()
+```
+
+Expected output:
+
+```text
++----------+-----+----------+-----+
+|Student_ID|Name |Department|Marks|
++----------+-----+----------+-----+
+|101       |Ajay |CSE       |85   |
+|102       |Rahul|IT        |90   |
+|103       |Priya|CSE       |88   |
+|105       |Neha |CSE       |92   |
++----------+-----+----------+-----+
+```
+
+**Step 9: Stop the Streaming Query**
+
+After processing the incoming data, stop the streaming application:
+
+```python
+query.stop()
+
+print("Streaming Process Completed Successfully")
+```
+
+### 3. Expected Output
+
+1. Successfully created a streaming data schema.
+2. Configured a streaming data source.
+3. Simulated real-time data using CSV files.
+4. Processed incoming records using Structured Streaming.
+5. Filtered records based on marks greater than 80.
+6. Displayed processed streaming records.
+7. Successfully stopped the streaming query.
+
+### 4. Functions Used
+
+| Function | Purpose |
+|---|---|
+| `readStream` | Reads streaming data |
+| `StructType()` | Defines data schema |
+| `filter()` | Filters incoming records |
+| `writeStream` | Writes streaming output |
+| `start()` | Starts the streaming query |
+| `processAllAvailable()` | Processes available input data |
+| `stop()` | Stops the streaming query |
+
+### 5. Result
+
+Successfully simulated real-time data streaming and processed incoming student records using Apache Spark Structured Streaming in Databricks. The application filtered records based on specified conditions and displayed the processed results.
+
+### 6. Conclusion
+
+Apache Spark Structured Streaming provides an efficient way to process continuously arriving data. It supports real-time data processing, filtering, and analysis, making it useful for applications such as monitoring systems, financial transactions, and IoT data processing.

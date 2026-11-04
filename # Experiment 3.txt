@@ -1,0 +1,132 @@
+# Experiment 3 – Databricks and Cloud Storage Integration
+
+**Aim:** Establish a connection between Databricks and Amazon S3/Azure Blob Storage, access files stored in cloud storage, and display the stored data in Databricks.
+
+## Solution
+
+**Platform Used:** Databricks and Amazon Web Services (AWS) S3.
+
+### 1. Introduction
+
+Databricks is a cloud-based data analytics platform used for processing and analyzing large datasets.
+
+Amazon S3 is an object storage service used to store files such as CSV, JSON, and Parquet.
+
+Databricks can connect to Amazon S3 and access files stored in cloud storage for data processing and analysis.
+
+### 2. Procedure
+
+**Step 1: Create an Amazon S3 Bucket**
+
+1. Log in to the AWS Management Console.
+2. Search for Amazon S3.
+3. Create a new bucket named `databricks-practical-storage-2026`.
+4. Select the Asia Pacific (Mumbai) region.
+5. Keep Block Public Access enabled.
+6. Click Create Bucket.
+
+**Step 2: Upload a Dataset to S3**
+
+Create a CSV file named `students.csv` containing the following data:
+
+```csv
+Student_ID,Name,Department,Marks
+101,Ajay,CSE,85
+102,Rahul,IT,90
+103,Priya,CSE,88
+104,Amit,ENTC,78
+105,Neha,CSE,92
+```
+
+1. Open the created S3 bucket.
+2. Click Upload.
+3. Select the `students.csv` file.
+4. Click Upload.
+5. Verify that the file is uploaded successfully.
+
+**Step 3: Configure Databricks Access to S3**
+
+1. Open your Databricks workspace.
+2. Configure an AWS IAM role or supported cloud storage credential.
+3. Grant the required read permissions to access the S3 bucket.
+4. Configure the storage credential and external location if required by your Databricks environment.
+5. Verify that Databricks can access the bucket.
+
+**Step 4: Create a Databricks Notebook**
+
+1. Open Databricks Workspace.
+2. Click Create and select Notebook.
+3. Enter the notebook name `S3_Integration_Practical`.
+4. Select Python as the programming language.
+5. Attach the available compute environment.
+
+**Step 5: Access the CSV File from S3**
+
+Execute the following PySpark command after configuring access permissions:
+
+```python
+file_path = "s3a://databricks-practical-storage-2026/students.csv"
+
+df = spark.read.option("header", "true").option("inferSchema", "true").csv(file_path)
+
+display(df)
+```
+
+**Step 6: Display the Stored Data**
+
+Execute the following command:
+
+```python
+df.show()
+```
+
+Expected output:
+
+```text
++----------+-----+----------+-----+
+|Student_ID| Name|Department|Marks|
++----------+-----+----------+-----+
+|       101| Ajay|       CSE|   85|
+|       102|Rahul|        IT|   90|
+|       103|Priya|       CSE|   88|
+|       104| Amit|      ENTC|   78|
+|       105| Neha|       CSE|   92|
++----------+-----+----------+-----+
+```
+
+**Step 7: Perform Data Analysis**
+
+Execute the following command to calculate the average marks:
+
+```python
+from pyspark.sql.functions import avg
+
+df.select(avg("Marks").alias("Average_Marks")).show()
+```
+
+Expected output:
+
+```text
++-------------+
+|Average_Marks|
++-------------+
+|         84.6|
++-------------+
+```
+
+### 3. Expected Output
+
+1. Created an Amazon S3 bucket.
+2. Uploaded the CSV dataset to cloud storage.
+3. Configured Databricks access to Amazon S3.
+4. Read the CSV file from S3 using PySpark.
+5. Displayed the stored data in Databricks.
+6. Successfully calculated the average marks.
+
+### 4. Result
+
+Successfully established integration between Databricks and Amazon S3, accessed the CSV dataset stored in cloud storage, displayed the data in Databricks, and performed basic data analysis.
+
+### 5. Conclusion
+
+Databricks can integrate with cloud storage services such as Amazon S3 and Azure Blob Storage. This integration enables users to access, process, and analyze datasets stored in the cloud using Apache Spark.

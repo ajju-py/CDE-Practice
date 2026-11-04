@@ -1,0 +1,192 @@
+# Experiment 4 – Loading CSV/JSON Data into DataFrames Using Databricks
+
+**Aim:** Load structured and semi-structured data (CSV/JSON) into DataFrames using Databricks and display schema and sample records.
+
+## Solution
+
+**Platform Used:** Databricks, Python, and Apache Spark (PySpark).
+
+### 1. Introduction
+
+Databricks is a cloud-based platform used for data processing and analytics.
+
+A DataFrame is a distributed collection of data organized into rows and columns. PySpark provides functions to read, process, and analyze structured and semi-structured data.
+
+- CSV (Comma-Separated Values): A structured data format that stores information in rows and columns.
+- JSON (JavaScript Object Notation): A semi-structured data format that stores information using key-value pairs.
+
+### 2. Procedure
+
+**Step 1: Open Databricks Workspace**
+
+1. Log in to your Databricks account.
+2. Open the workspace.
+3. Navigate to Workspace.
+4. Create a new notebook.
+5. Name the notebook `DataFrame_Practical`.
+6. Select Python as the programming language.
+
+**Step 2: Create a CSV Dataset**
+
+Create a file named `students.csv` with the following data:
+
+```csv
+Student_ID,Name,Department,Marks
+101,Ajay,CSE,85
+102,Rahul,IT,90
+103,Priya,CSE,88
+104,Amit,ENTC,78
+105,Neha,CSE,92
+```
+
+Upload the file to Databricks or make it available through the configured cloud storage location.
+
+**Step 3: Load CSV Data into a DataFrame**
+
+Execute the following PySpark code:
+
+```python
+csv_path = "/path/to/students.csv"
+
+csv_df = spark.read.option("header", "true") \
+    .option("inferSchema", "true") \
+    .csv(csv_path)
+
+display(csv_df)
+```
+
+**Step 4: Display CSV Schema**
+
+Execute:
+
+```python
+csv_df.printSchema()
+```
+
+Expected output:
+
+```text
+root
+ |-- Student_ID: integer
+ |-- Name: string
+ |-- Department: string
+ |-- Marks: integer
+```
+
+**Step 5: Display Sample Records**
+
+Execute:
+
+```python
+csv_df.show(5)
+```
+
+Expected output:
+
+```text
++----------+-----+----------+-----+
+|Student_ID| Name|Department|Marks|
++----------+-----+----------+-----+
+|       101| Ajay|       CSE|   85|
+|       102|Rahul|        IT|   90|
+|       103|Priya|       CSE|   88|
+|       104| Amit|      ENTC|   78|
+|       105| Neha|       CSE|   92|
++----------+-----+----------+-----+
+```
+
+**Step 6: Create a JSON Dataset**
+
+Create a file named `students.json` with the following data:
+
+```json
+[
+  {
+    "Student_ID": 101,
+    "Name": "Ajay",
+    "Department": "CSE",
+    "Marks": 85
+  },
+  {
+    "Student_ID": 102,
+    "Name": "Rahul",
+    "Department": "IT",
+    "Marks": 90
+  },
+  {
+    "Student_ID": 103,
+    "Name": "Priya",
+    "Department": "CSE",
+    "Marks": 88
+  },
+  {
+    "Student_ID": 104,
+    "Name": "Amit",
+    "Department": "ENTC",
+    "Marks": 78
+  },
+  {
+    "Student_ID": 105,
+    "Name": "Neha",
+    "Department": "CSE",
+    "Marks": 92
+  }
+]
+```
+
+Upload the JSON file to Databricks or make it available through the configured storage location.
+
+**Step 7: Load JSON Data into a DataFrame**
+
+Execute:
+
+```python
+json_path = "/path/to/students.json"
+
+json_df = spark.read.option("multiLine", "true").json(json_path)
+
+display(json_df)
+```
+
+**Step 8: Display JSON Schema**
+
+Execute:
+
+```python
+json_df.printSchema()
+```
+
+Expected output:
+
+```text
+root
+ |-- Department: string
+ |-- Marks: long
+ |-- Name: string
+ |-- Student_ID: long
+```
+
+**Step 9: Display Sample JSON Records**
+
+Execute:
+
+```python
+json_df.show(5)
+```
+
+### 3. Expected Output
+
+1. Successfully created a Databricks notebook.
+2. Loaded CSV data into a DataFrame.
+3. Loaded JSON data into a DataFrame.
+4. Displayed the schema of both DataFrames.
+5. Displayed the first five records.
+6. Verified the data types and structure of the datasets.
+
+### 4. Result
+
+Successfully loaded structured CSV and semi-structured JSON datasets into PySpark DataFrames using Databricks and displayed their schemas and sample records.
+
+### 5. Conclusion
+
+Databricks and PySpark provide efficient methods to load and process structured and semi-structured data. DataFrames help organize datasets into rows and columns for further analysis and processing.

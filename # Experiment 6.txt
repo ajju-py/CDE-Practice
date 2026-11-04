@@ -1,0 +1,198 @@
+# Experiment 6 – SQL Operations in Databricks
+
+**Aim:** Use SQL queries in Databricks to perform operations like SELECT, JOIN, GROUP BY, and aggregation on a dataset.
+
+## Solution
+
+**Platform Used:** Databricks SQL, Python, and Apache Spark.
+
+### 1. Introduction
+
+Databricks supports SQL operations to query, manage, and analyze large datasets. SQL (Structured Query Language) is used to retrieve and manipulate data stored in tables.
+
+The following operations are performed:
+- SELECT: Retrieves records from a table.
+- JOIN: Combines records from two tables.
+- GROUP BY: Groups records based on a column.
+- Aggregation: Performs calculations such as SUM, AVG, COUNT, MIN, and MAX.
+
+### 2. Procedure
+
+**Step 1: Open Databricks Workspace**
+
+1. Log in to your Databricks account.
+2. Open the workspace.
+3. Create a new notebook.
+4. Name it `SQL_Operations_Practical`.
+5. Select Python as the notebook language.
+
+**Step 2: Create Student Dataset**
+
+Execute the following Python code:
+
+```python
+students = [
+    (101, "Ajay", "CSE", 85),
+    (102, "Rahul", "IT", 90),
+    (103, "Priya", "CSE", 88),
+    (104, "Amit", "ENTC", 78),
+    (105, "Neha", "CSE", 92)
+]
+
+student_columns = ["Student_ID", "Name", "Department", "Marks"]
+
+students_df = spark.createDataFrame(students, student_columns)
+
+students_df.createOrReplaceTempView("students")
+```
+
+**Step 3: Create Department Dataset**
+
+```python
+departments = [
+    ("CSE", "Computer Science"),
+    ("IT", "Information Technology"),
+    ("ENTC", "Electronics")
+]
+
+department_columns = ["Department", "Department_Name"]
+
+departments_df = spark.createDataFrame(
+    departments, department_columns
+)
+
+departments_df.createOrReplaceTempView("departments")
+```
+
+**Step 4: Perform SELECT Operation**
+
+Retrieve all student records:
+
+```sql
+%sql
+SELECT * FROM students;
+```
+
+Retrieve students who scored more than 80 marks:
+
+```sql
+%sql
+SELECT * FROM students
+WHERE Marks > 80;
+```
+
+**Step 5: Perform JOIN Operation**
+
+Combine student and department tables using the Department column:
+
+```sql
+%sql
+SELECT
+    students.Student_ID,
+    students.Name,
+    departments.Department_Name,
+    students.Marks
+FROM students
+INNER JOIN departments
+ON students.Department = departments.Department;
+```
+
+**Step 6: Perform GROUP BY Operation**
+
+Count the number of students in each department:
+
+```sql
+%sql
+SELECT Department, COUNT(*) AS Total_Students
+FROM students
+GROUP BY Department;
+```
+
+**Step 7: Perform Aggregation Operations**
+
+Calculate average, maximum, minimum, and total marks:
+
+```sql
+%sql
+SELECT
+    AVG(Marks) AS Average_Marks,
+    MAX(Marks) AS Maximum_Marks,
+    MIN(Marks) AS Minimum_Marks,
+    SUM(Marks) AS Total_Marks,
+    COUNT(*) AS Total_Students
+FROM students;
+```
+
+### 3. Expected Output
+
+**SELECT Operation:**
+
+```text
++----------+-----+----------+-----+
+|Student_ID|Name |Department|Marks|
++----------+-----+----------+-----+
+|101       |Ajay |CSE       |85   |
+|102       |Rahul|IT        |90   |
+|103       |Priya|CSE       |88   |
+|104       |Amit |ENTC      |78   |
+|105       |Neha |CSE       |92   |
++----------+-----+----------+-----+
+```
+
+**JOIN Operation:**
+
+```text
++----------+-----+------------------------+-----+
+|Student_ID|Name |Department_Name         |Marks|
++----------+-----+------------------------+-----+
+|101       |Ajay |Computer Science        |85   |
+|102       |Rahul|Information Technology  |90   |
+|103       |Priya|Computer Science        |88   |
+|104       |Amit |Electronics              |78   |
+|105       |Neha |Computer Science        |92   |
++----------+-----+------------------------+-----+
+```
+
+**GROUP BY Operation:**
+
+```text
++----------+--------------+
+|Department|Total_Students|
++----------+--------------+
+|CSE       |3             |
+|IT        |1             |
+|ENTC      |1             |
++----------+--------------+
+```
+
+**Aggregation Operation:**
+
+```text
++-------------+-------------+-------------+-----------+--------------+
+|Average_Marks|Maximum_Marks|Minimum_Marks|Total_Marks|Total_Students|
++-------------+-------------+-------------+-----------+--------------+
+|86.6         |92           |78           |433        |5             |
++-------------+-------------+-------------+-----------+--------------+
+```
+
+### 4. SQL Functions Used
+
+| SQL Operation | Purpose |
+|---|---|
+| SELECT | Retrieves records |
+| WHERE | Filters records |
+| INNER JOIN | Combines matching records from two tables |
+| GROUP BY | Groups records |
+| COUNT() | Counts records |
+| SUM() | Calculates total |
+| AVG() | Calculates average |
+| MAX() | Finds maximum value |
+| MIN() | Finds minimum value |
+
+### 5. Result
+
+Successfully executed SQL queries in Databricks using SELECT, WHERE, INNER JOIN, GROUP BY, and aggregation functions on student and department datasets.
+
+### 6. Conclusion
+
+Databricks supports SQL operations for querying and analyzing structured datasets. SELECT, JOIN, GROUP BY, and aggregation functions help retrieve, combine, group, and summarize data efficiently.

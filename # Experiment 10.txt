@@ -1,0 +1,177 @@
+# Experiment 10 – Sales Analytics Dashboard Using Databricks
+
+**Aim:** To create meaningful visualizations such as bar charts and line charts and combine them into an interactive sales analytics dashboard using the processed data stored in the `practical9_streaming_sales` Delta table in Databricks.
+
+## Solution
+
+**Platform Used:** Databricks, Python, PySpark, Spark SQL, and Databricks Dashboards.
+
+### 1. Introduction
+
+Data visualization is the process of representing data using graphical elements such as charts and graphs.
+
+Databricks provides visualization and dashboard features to analyze datasets and monitor business performance.
+
+A sales analytics dashboard helps users understand sales trends, compare product performance, and analyze revenue over time.
+
+The following visualizations are created:
+- Bar Chart: Displays sales by product.
+- Line Chart: Displays sales trends over time.
+- Sales Summary: Displays total sales and other key metrics.
+
+### 2. Procedure
+
+**Step 1: Open Databricks Workspace**
+
+1. Log in to your Databricks account.
+2. Open the workspace.
+3. Create a new notebook.
+4. Name the notebook `Sales_Analytics_Dashboard`.
+5. Select Python as the programming language.
+
+**Step 2: Load the Processed Delta Table**
+
+Read the processed sales data from the Delta table:
+
+```python
+df = spark.table("practical9_streaming_sales")
+
+display(df)
+```
+
+**Step 3: Verify Dataset Structure**
+
+Execute the following command:
+
+```python
+df.printSchema()
+
+df.show(5)
+```
+
+This displays the column names, data types, and sample records.
+
+**Step 4: Calculate Total Sales**
+
+Execute the following code:
+
+```python
+from pyspark.sql.functions import sum, avg, count
+
+sales_summary = df.select(
+    sum("Sales").alias("Total_Sales"),
+    avg("Sales").alias("Average_Sales"),
+    count("*").alias("Total_Records")
+)
+
+display(sales_summary)
+```
+
+**Step 5: Create a Bar Chart**
+
+Calculate sales for each product:
+
+```python
+product_sales = df.groupBy("Product") \
+    .sum("Sales") \
+    .withColumnRenamed("sum(Sales)", "Total_Sales")
+
+display(product_sales)
+```
+
+In the visualization options:
+1. Select Bar Chart.
+2. Set Product as the X-axis.
+3. Set Total_Sales as the Y-axis.
+4. Apply the chart.
+
+**Step 6: Create a Line Chart**
+
+Calculate sales over time:
+
+```python
+from pyspark.sql.functions import to_date
+
+daily_sales = df.withColumn(
+    "Sale_Date",
+    to_date("Sale_Date")
+).groupBy("Sale_Date").sum("Sales") \
+ .withColumnRenamed("sum(Sales)", "Total_Sales") \
+ .orderBy("Sale_Date")
+
+display(daily_sales)
+```
+
+In the visualization options:
+1. Select Line Chart.
+2. Set Sale_Date as the X-axis.
+3. Set Total_Sales as the Y-axis.
+4. Apply the chart.
+
+**Step 7: Create a Sales Analytics Dashboard**
+
+1. Open the Databricks SQL or dashboard interface.
+2. Create a new dashboard.
+3. Add the product sales bar chart.
+4. Add the daily sales line chart.
+5. Add the sales summary visualization.
+6. Arrange the visualizations properly.
+7. Save the dashboard with the name `Sales_Analytics_Dashboard`.
+
+**Step 8: Verify the Dashboard**
+
+Verify that:
+1. The bar chart displays product-wise sales.
+2. The line chart displays daily sales trends.
+3. The summary displays total sales, average sales, and total records.
+4. All visualizations use data from the `practical9_streaming_sales` Delta table.
+
+### 3. Expected Output
+
+**Bar Chart:** Displays the total sales of each product and helps identify the best-performing products.
+
+**Line Chart:** Displays sales trends over different dates and helps identify increases or decreases in sales.
+
+**Sales Summary:** Displays the total revenue, average sales, and total number of sales records.
+
+**Dashboard Structure:**
+
+```text
++------------------------------------------+
+|          SALES ANALYTICS DASHBOARD      |
++------------------------------------------+
+| Total Sales | Average Sales | Records   |
++------------------------------------------+
+|                                          |
+|          PRODUCT-WISE SALES              |
+|               BAR CHART                  |
+|                                          |
++------------------------------------------+
+|                                          |
+|          DAILY SALES TREND               |
+|               LINE CHART                 |
+|                                          |
++------------------------------------------+
+```
+
+### 4. Functions Used
+
+| Function | Purpose |
+|---|---|
+| `spark.table()` | Reads the Delta table |
+| `printSchema()` | Displays dataset schema |
+| `groupBy()` | Groups sales records |
+| `sum()` | Calculates total sales |
+| `avg()` | Calculates average sales |
+| `count()` | Counts records |
+| `orderBy()` | Sorts records |
+| `display()` | Displays data and visualizations |
+| `to_date()` | Converts values into date format |
+
+### 5. Result
+
+Successfully created sales analytics visualizations using Databricks by reading processed data from the `practical9_streaming_sales` Delta table. Created bar charts, line charts, and a sales summary and combined them into an interactive sales analytics dashboard.
+
+### 6. Conclusion
+
+Databricks provides visualization and dashboard capabilities for analyzing business data. Bar charts and line charts help identify sales patterns, compare product performance, and support data-driven decision-making.

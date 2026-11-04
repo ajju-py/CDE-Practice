@@ -1,0 +1,106 @@
+# Experiment 2 – Databricks Workspace and Cluster
+
+**Aim:** Set up a workspace and create a cluster in Databricks. Verify cluster configuration and execute a simple notebook command.
+
+## Solution
+
+**Platform Used:** Databricks Community Edition / Databricks Free Edition.
+
+### 1. Introduction
+
+Databricks is a cloud-based data analytics platform used for data engineering, data science, machine learning, and big data processing.
+
+A workspace is an environment where users can create and manage notebooks, clusters, libraries, and data.
+
+A cluster is a collection of computing resources used to execute notebook commands and process data.
+
+### 2. Procedure
+
+**Step 1: Open Databricks**
+1. Open https://www.databricks.com/
+2. Sign up or log in to your Databricks account.
+3. Access the Databricks workspace.
+
+**Step 2: Create a Workspace**
+1. Open the Databricks account console.
+2. Select Workspaces.
+3. Click Create Workspace, if available.
+4. Enter a workspace name.
+5. Select the required cloud provider and region.
+6. Complete the setup and open the workspace.
+
+**Step 3: Create a Cluster**
+1. Open the workspace.
+2. Navigate to Compute.
+3. Click Create Compute.
+4. Enter the cluster name: `My-Practical-Cluster`.
+5. Select the available Databricks Runtime version.
+6. Select the available node type.
+7. Configure the required computing resources.
+8. Click Create Compute.
+
+**Step 4: Verify Cluster Configuration**
+
+Verify the following details:
+
+- Cluster name: My-Practical-Cluster
+- Cluster status: Running
+- Databricks Runtime version
+- Node type
+- Number of workers
+- Compute resources
+
+**Step 5: Create a Notebook**
+1. Navigate to Workspace.
+2. Click Create.
+3. Select Notebook.
+4. Enter the notebook name: `Cloud_Practical_Experiment_2`.
+5. Select Python as the programming language.
+6. Attach the created cluster to the notebook.
+
+**Step 6: Execute a Simple Notebook Command**
+
+Enter the following Python command in the notebook:
+
+```python
+print("Hello, Databricks!")
+print("My first Databricks practical")
+```
+
+Click Run or press Shift + Enter.
+
+**Step 7: Perform a Simple Calculation**
+
+Execute the following command:
+
+```python
+a = 10
+b = 20
+
+result = a + b
+
+print("Addition:", result)
+```
+
+Expected output:
+
+```text
+Addition: 30
+```
+
+### 3. Expected Output
+
+1. Databricks workspace created and accessed successfully.
+2. Compute cluster created successfully.
+3. Cluster configuration verified.
+4. Notebook created successfully.
+5. Python commands executed successfully.
+6. Expected output displayed in the notebook.
+
+### 4. Result
+
+Successfully set up a Databricks workspace, created a compute cluster, verified its configuration, and executed simple Python commands in a Databricks notebook.
+
+### 5. Conclusion
+
+Databricks provides a cloud-based environment for data engineering and analytics. The practical demonstrated workspace setup, cluster creation, configuration verification, and notebook execution.
